@@ -1,0 +1,374 @@
+// Wine Database Schema
+// Entity Relationship Diagram for Wine and Food Pairing Analysis
+
+Project wine_database {
+  database_type: 'PostgreSQL'
+  Note: 'Wine database for food pairing analysis with multiple data sources'
+}
+
+// Central entity - Wine Food Pairings
+Table wine_food_pairings {
+  pairing_id integer [primary key, increment]
+  wine_type varchar(50) [not null, note: 'Type of wine (e.g., Syrah, Chardonnay)']
+  wine_category varchar(20) [not null, note: 'Category: Red, White, Sparkling, etc.']
+  food_item varchar(100) [not null, note: 'Specific food item']
+  food_category varchar(50) [not null, note: 'Food category classification']
+  cuisine varchar(50) [note: 'Cuisine type (French, Italian, etc.)']
+  pairing_quality integer [not null, note: 'Quality score 1-5']
+  quality_label varchar(20) [note: 'Poor, Neutral, Good, Excellent']
+  description text [note: 'Pairing description and rationale']
+  created_at timestamp [default: `now()`]
+  
+  Note: 'Central table containing wine-food pairing relationships with quality assessments'
+}
+
+// Wine varieties master table
+Table wine_varieties {
+  variety_id integer [primary key, increment]
+  variety_name varchar(100) [unique, not null, note: 'Wine variety name']
+  category varchar(20) [note: 'General category (Red, White, etc.)']
+  origin_region varchar(100) [note: 'Traditional origin region']
+  
+  Note: 'Master list of all wine varieties'
+}
+
+// Red wine catalog
+Table red_wines {
+  red_wine_id integer [primary key, increment]
+  name varchar(200) [not null, note: 'Wine name']
+  country varchar(50) [not null]
+  region varchar(100) [note: 'Wine region']
+  winery varchar(100) [not null, note: 'Producer/Winery name']
+  rating decimal(3,2) [note: 'Wine rating (0.0-5.0)']
+  number_of_ratings integer [note: 'Number of ratings received']
+  price decimal(8,2) [note: 'Price in USD']
+  year integer [note: 'Vintage year']
+  variety_id integer [ref: > wine_varieties.variety_id]
+  
+  Note: 'Red wine catalog with ratings and pricing'
+}
+
+// White wine catalog  
+Table white_wines {
+  white_wine_id integer [primary key, increment]
+  name varchar(200) [not null, note: 'Wine name']
+  country varchar(50) [not null]
+  region varchar(100) [note: 'Wine region']
+  winery varchar(100) [not null, note: 'Producer/Winery name']
+  rating decimal(3,2) [note: 'Wine rating (0.0-5.0)']
+  number_of_ratings integer [note: 'Number of ratings received']
+  price decimal(8,2) [note: 'Price in USD']
+  year integer [note: 'Vintage year']
+  variety_id integer [ref: > wine_varieties.variety_id]
+  
+  Note: 'White wine catalog with ratings and pricing'
+}
+
+// Rose wine catalog
+Table rose_wines {
+  rose_wine_id integer [primary key, increment]
+  name varchar(200) [not null, note: 'Wine name']
+  country varchar(50) [not null]
+  region varchar(100) [note: 'Wine region']
+  winery varchar(100) [not null, note: 'Producer/Winery name']
+  rating decimal(3,2) [note: 'Wine rating (0.0-5.0)']
+  number_of_ratings integer [note: 'Number of ratings received']
+  price decimal(8,2) [note: 'Price in USD']
+  year integer [note: 'Vintage year']
+  variety_id integer [ref: > wine_varieties.variety_id]
+  
+  Note: 'Rose wine catalog with ratings and pricing'
+}
+
+// Sparkling wine catalog
+Table sparkling_wines {
+  sparkling_wine_id integer [primary key, increment]
+  name varchar(200) [not null, note: 'Wine name']
+  country varchar(50) [not null]
+  region varchar(100) [note: 'Wine region']
+  winery varchar(100) [not null, note: 'Producer/Winery name']
+  rating decimal(3,2) [note: 'Wine rating (0.0-5.0)']
+  number_of_ratings integer [note: 'Number of ratings received']
+  price decimal(8,2) [note: 'Price in USD']
+  year integer [note: 'Vintage year']
+  variety_id integer [ref: > wine_varieties.variety_id]
+  
+  Note: 'Sparkling wine catalog with ratings and pricing'
+}
+
+// Wine quality analysis data
+Table wine_quality {
+  quality_id integer [primary key, increment]
+  wine_type varchar(20) [not null, note: 'Red or White wine type']
+  fixed_acidity decimal(5,2) [note: 'Fixed acidity measurement']
+  volatile_acidity decimal(5,3) [note: 'Volatile acidity measurement']
+  citric_acid decimal(4,2) [note: 'Citric acid content']
+  residual_sugar decimal(5,2) [note: 'Residual sugar content']
+  chlorides decimal(6,3) [note: 'Chloride content']
+  free_sulfur_dioxide integer [note: 'Free SO2 levels']
+  total_sulfur_dioxide integer [note: 'Total SO2 levels']
+  density decimal(7,4) [note: 'Wine density']
+  ph decimal(4,2) [note: 'pH level']
+  sulphates decimal(4,2) [note: 'Sulphate content']
+  alcohol decimal(4,2) [note: 'Alcohol percentage']
+  quality_score integer [note: 'Quality score (0-10)']
+  
+  Note: 'Chemical analysis data for wine quality assessment'
+}
+
+// Professional wine reviews
+Table wine_reviews {
+  review_id integer [primary key, increment]
+  country varchar(50) [note: 'Country of origin']
+  description text [note: 'Professional tasting notes']
+  designation varchar(200) [note: 'Wine designation/name']
+  points integer [note: 'Review points (0-100)']
+  price decimal(8,2) [note: 'Price in USD']
+  province varchar(100) [note: 'Province/State']
+  region_1 varchar(100) [note: 'Primary region']
+  region_2 varchar(100) [note: 'Secondary region']
+  variety varchar(100) [note: 'Wine variety']
+  winery varchar(200) [note: 'Winery name']
+  reviewer_name varchar(100) [note: 'Wine reviewer']
+  review_date date [note: 'Review date']
+  
+  Note: 'Professional wine reviews from wine magazines'
+}
+
+// Food categories for classification
+Table food_categories {
+  food_category_id integer [primary key, increment]
+  category_name varchar(50) [unique, not null]
+  description text [note: 'Description of food category']
+  
+  Note: 'Food category classifications'
+}
+
+// Cuisine types
+Table cuisine_types {
+  cuisine_id integer [primary key, increment]
+  cuisine_name varchar(50) [unique, not null]
+  origin_country varchar(50) [note: 'Country of origin']
+  characteristics text [note: 'Cuisine characteristics']
+  
+  Note: 'Different cuisine types and their characteristics'
+}
+
+// Relationships
+Ref: wine_food_pairings.wine_type > wine_varieties.variety_name [note: 'Wine pairing references wine variety']
+Ref: wine_food_pairings.food_category > food_categories.category_name [note: 'Pairing references food category']
+Ref: wine_food_pairings.cuisine > cuisine_types.cuisine_name [note: 'Pairing references cuisine type']
+
+/* 
+WINE REVIEWS & QUALITY MAPPING STRATEGY:
+
+1. WINE_REVIEWS → WINE_PAIRINGS:
+   - Match by wine variety (fuzzy string matching)
+   - Match by winery name (across catalogs and reviews)
+   - Match by geographic region (standardized regions)
+   - Confidence scoring based on multiple criteria matches
+
+2. WINE_QUALITY → WINE_PAIRINGS:
+   - Match by wine category (Red/White classification)
+   - Chemical property analysis for pairing prediction
+   - Quality score correlation with pairing effectiveness
+   - Predictive modeling for food-wine compatibility
+
+3. CROSS-DATASET STANDARDIZATION:
+   - variety_mappings: Unifies wine variety names across datasets
+   - region_mappings: Standardizes geographic references
+   - Confidence scoring for all mappings (0.0-1.0)
+
+4. USE CASES:
+   - Enhanced pairing recommendations using professional reviews
+   - Chemical-based pairing analysis (tannins, acidity, etc.)
+   - Price-quality analysis for wine selection
+   - Regional specialty pairing identification
+*/
+
+// Many-to-many relationship through junction table for wine catalog references
+Table wine_pairing_references {
+  reference_id integer [primary key, increment]
+  pairing_id integer [ref: > wine_food_pairings.pairing_id]
+  red_wine_id integer [ref: > red_wines.red_wine_id, note: 'Reference to red wine if applicable']
+  white_wine_id integer [ref: > white_wines.white_wine_id, note: 'Reference to white wine if applicable']
+  rose_wine_id integer [ref: > rose_wines.rose_wine_id, note: 'Reference to rose wine if applicable']
+  sparkling_wine_id integer [ref: > sparkling_wines.sparkling_wine_id, note: 'Reference to sparkling wine if applicable']
+  
+  Note: 'Junction table linking pairings to specific wines in catalogs'
+}
+
+// Enhanced mapping for wine reviews to pairings
+Table wine_review_mappings {
+  mapping_id integer [primary key, increment]
+  pairing_id integer [ref: > wine_food_pairings.pairing_id, note: 'Links to wine pairing']
+  review_id integer [ref: > wine_reviews.review_id, note: 'Links to professional review']
+  matching_score decimal(3,2) [note: 'Algorithm confidence score (0.0-1.0)']
+  match_criteria varchar(100) [note: 'How the match was determined (variety, winery, region)']
+  created_at timestamp [default: `now()`]
+  
+  Note: 'Maps wine reviews to pairing data based on variety, winery, and region matching'
+}
+
+// Enhanced mapping for wine quality to pairings  
+Table wine_quality_mappings {
+  mapping_id integer [primary key, increment]
+  pairing_id integer [ref: > wine_food_pairings.pairing_id, note: 'Links to wine pairing']
+  quality_id integer [ref: > wine_quality.quality_id, note: 'Links to chemical analysis']
+  wine_category_match varchar(20) [note: 'Red/White category match']
+  quality_prediction decimal(3,2) [note: 'Predicted pairing quality based on chemical analysis']
+  confidence_level varchar(20) [note: 'High, Medium, Low confidence']
+  analysis_notes text [note: 'Notes on chemical property correlations']
+  created_at timestamp [default: `now()`]
+  
+  Note: 'Maps wine quality data to pairings based on wine category and chemical properties'
+}
+
+// Wine variety standardization for better matching
+Table variety_mappings {
+  variety_mapping_id integer [primary key, increment]
+  pairing_wine_type varchar(50) [note: 'Wine type from pairing data']
+  review_variety varchar(100) [note: 'Variety name from review data']  
+  catalog_name varchar(200) [note: 'Name from wine catalog']
+  standardized_variety varchar(100) [ref: > wine_varieties.variety_name, note: 'Standardized variety name']
+  mapping_type varchar(20) [note: 'Exact, Fuzzy, Manual']
+  confidence_score decimal(3,2) [note: 'Mapping confidence (0.0-1.0)']
+  
+  Note: 'Standardizes wine variety names across different datasets for consistent mapping'
+}
+
+// Regional mapping for geographic consistency
+Table region_mappings {
+  region_mapping_id integer [primary key, increment]
+  review_region varchar(100) [note: 'Region from review data']
+  catalog_region varchar(100) [note: 'Region from wine catalog']
+  standardized_region varchar(100) [note: 'Standardized region name']
+  country varchar(50) [note: 'Country for regional context']
+  mapping_confidence decimal(3,2) [note: 'Confidence in regional mapping']
+  
+  Note: 'Maps regional variations across datasets for geographic consistency'
+}
+
+// Indexes for performance
+Table wine_food_pairings {
+  indexes {
+    wine_type [name: 'idx_wine_type']
+    wine_category [name: 'idx_wine_category']
+    food_category [name: 'idx_food_category']
+    pairing_quality [name: 'idx_pairing_quality']
+    (wine_type, food_category) [name: 'idx_wine_food_combo']
+  }
+}
+
+Table red_wines {
+  indexes {
+    country [name: 'idx_red_country']
+    region [name: 'idx_red_region']
+    winery [name: 'idx_red_winery']
+    rating [name: 'idx_red_rating']
+    year [name: 'idx_red_year']
+  }
+}
+
+Table white_wines {
+  indexes {
+    country [name: 'idx_white_country']
+    region [name: 'idx_white_region']
+    winery [name: 'idx_white_winery']
+    rating [name: 'idx_white_rating']
+    year [name: 'idx_white_year']
+  }
+}
+
+Table wine_reviews {
+  indexes {
+    variety [name: 'idx_review_variety']
+    country [name: 'idx_review_country']
+    points [name: 'idx_review_points']
+    winery [name: 'idx_review_winery']
+  }
+}
+
+Table wine_quality {
+  indexes {
+    wine_type [name: 'idx_quality_type']
+    quality_score [name: 'idx_quality_score']
+    alcohol [name: 'idx_alcohol']
+  }
+}
+
+// New mapping table indexes for performance
+Table wine_review_mappings {
+  indexes {
+    pairing_id [name: 'idx_review_mapping_pairing']
+    review_id [name: 'idx_review_mapping_review']
+    matching_score [name: 'idx_review_matching_score']
+    (pairing_id, review_id) [unique, name: 'idx_unique_review_pairing']
+  }
+}
+
+Table wine_quality_mappings {
+  indexes {
+    pairing_id [name: 'idx_quality_mapping_pairing'] 
+    quality_id [name: 'idx_quality_mapping_quality']
+    wine_category_match [name: 'idx_quality_category_match']
+    quality_prediction [name: 'idx_quality_prediction']
+    (pairing_id, quality_id) [unique, name: 'idx_unique_quality_pairing']
+  }
+}
+
+Table variety_mappings {
+  indexes {
+    pairing_wine_type [name: 'idx_variety_pairing_type']
+    review_variety [name: 'idx_variety_review']
+    standardized_variety [name: 'idx_variety_standardized']
+    confidence_score [name: 'idx_variety_confidence']
+  }
+}
+
+Table region_mappings {
+  indexes {
+    review_region [name: 'idx_region_review']
+    standardized_region [name: 'idx_region_standardized']
+    country [name: 'idx_region_country']
+  }
+}
+
+/*
+ENHANCED ERD MAPPING SUMMARY:
+
+CORE DATA FLOW:
+wine_food_pairings (34,933 records) 
+    ↓
+wine_pairing_references (junction table)
+    ↓
+┌─ red_wines/white_wines/rose_wines/sparkling_wines (catalogs)
+├─ wine_reviews (150k professional reviews) → wine_review_mappings
+└─ wine_quality (1,600 chemical analyses) → wine_quality_mappings
+
+KEY MAPPING STRATEGIES:
+
+1. WINE REVIEWS INTEGRATION:
+   ┌─ Variety matching (Cabernet Sauvignon ↔ Cabernet Sauvignon)
+   ├─ Winery cross-reference (Domaine X ↔ Domaine X)
+   ├─ Geographic alignment (Napa Valley ↔ California)
+   └─ Point score correlation (95 points ↔ rating 4.8)
+
+2. WINE QUALITY INTEGRATION:
+   ┌─ Category matching (Red ↔ Red wine analysis)
+   ├─ Chemical prediction (tannins + acidity → meat pairing)
+   ├─ Quality correlation (score 8/10 ↔ pairing_quality 4/5)
+   └─ Alcohol content analysis (14% ↔ food compatibility)
+
+3. CROSS-DATASET NORMALIZATION:
+   ┌─ variety_mappings: "Syrah" = "Shiraz" = "Syrah/Shiraz"
+   ├─ region_mappings: "Napa" = "Napa Valley" = "Napa County"
+   └─ Confidence scoring: 1.0 (exact) → 0.6 (fuzzy) → 0.3 (weak)
+
+BUSINESS VALUE:
+✓ Professional review integration for pairing validation
+✓ Chemical analysis for scientific pairing recommendations  
+✓ Price-quality analysis across 150k+ wines
+✓ Regional specialty identification and mapping
+✓ Predictive pairing quality based on wine characteristics
+*/

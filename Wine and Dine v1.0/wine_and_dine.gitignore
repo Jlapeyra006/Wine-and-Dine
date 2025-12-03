@@ -1,0 +1,26 @@
+# Ignore workspace and temporary files
+.RData
+.Rhistory
+.DS_Store
+
+# Ignore IDE files
+.vscode/
+.Rproj.user/
+*.Rproj
+
+# Ignore log files
+*.log
+
+# Ignore backup files
+*_backup*
+*_v*.R
+server_v*.R
+
+# Ignore temporary files
+*~
+*.tmp
+*.bak
+
+# Ignore system files
+Thumbs.db
+.idea/
